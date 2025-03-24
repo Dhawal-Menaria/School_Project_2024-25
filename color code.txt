@@ -1,4 +1,0 @@
-pink == #f0989d
-gray == #7c696e
-white == #f2f2f2
-black == #0c0b0c

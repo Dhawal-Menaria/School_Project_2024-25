@@ -24,8 +24,8 @@ loading_title = Label(root, text="Loading...",font=('Century Gothic',20),fg='#f2
 loading_title.place(x=325, y=50)
 loading_number = Label(root, text="0%",font=('Century Gothic',12),fg='#f2f2f2')
 loading_number.place(x=365, y=125)
-loading_txt = Label(root, text="___Establishing connection ...___",font=('Century Gothic',12),fg='#f2f2f2')
-loading_txt.place(x=270, y=150)
+loading_txt = Label(root, text="Establishing connections ... ",font=('Century Gothic',12),fg='#f2f2f2',width=40)
+loading_txt.place(x=180, y=150)
 
 
 conn = cur = NONE
@@ -47,39 +47,56 @@ def startbar():
             loading_number.config(text=ss)
             root.update_idletasks()
 
-            if i == 20:
+            if i == 17:
                 try:
                     conn = ms.connect(host="localhost", user="root")
                     cur = conn.cursor()
-                    loading_txt['text'] = "Detecting presence of database ..."
+                    loading_txt['text'] = "    Creating database ...    "
                 except:
                     messagebox.showwarning("Connection failed!", "Check your connection")
                     quit()
-            elif i == 40:
+            elif i == 33:
                 try:
                     cur.execute('CREATE DATABASE IF NOT EXISTS digbydhawal')
                     cur.execute('USE digbydhawal')
-                    loading_txt['text'] = "Initializing user table ..."
+                    loading_txt['text'] = "   Creating User table ...   "
                 except:
-                    messagebox.showwarning("Database issue", "There is a problem with the database.")
+                    messagebox.showwarning("Database creation failed", "There was an occur while creating database.")
                     quit()
-            elif i == 60:
+            elif i == 50:
                 try:
-                    cur.execute('CREATE TABLE IF NOT EXISTS user(sno INT NOT NULL AUTO_INCREMENT, username VARCHAR(50), password VARCHAR(50), full_name VARCHAR(50), email VARCHAR(50), gender VARCHAR(1), PRIMARY KEY(sno));')
+                    cur.execute('CREATE TABLE IF NOT EXISTS user(sno INT NOT NULL AUTO_INCREMENT, username VARCHAR(50), password VARCHAR(50), full_name VARCHAR(50), email VARCHAR(50), gender VARCHAR(1),date_of_birth DATE, PRIMARY KEY(sno));')
                     conn.commit()
-                    loading_txt['text'] = "Creating admin access ..."
+                    loading_txt['text'] = "  Setting up Admin user ...  "
                 except:
-                    messagebox.showwarning("Table issue", "There is a problem with the user table.")
+                    messagebox.showwarning("Table creation failed", "There was an while creating user table.")
                     quit()
-            elif i == 80:
+            elif i == 67:
                 try:
                     cur.execute('SELECT COUNT(*) FROM user WHERE username="admin" AND password="admin"')
                     count = cur.fetchall()
                     if count[0][0] == 0:
                         cur.execute('INSERT INTO user(username, password) VALUES("admin", "admin")')
                         conn.commit()
+                    loading_txt['text'] = "   Creating post table ...   "
                 except:
-                    messagebox.showwarning("Admin issue", "There is a problem with the admin setup.")
+                    messagebox.showwarning("Administraion failed", "There was an error while setting up admin user.")
+                    quit()
+            elif i == 83:
+                try:
+                    cur.execute('CREATE TABLE IF NOT EXISTS post(slug INT NOT NULL AUTO_INCREMENT,username VARCHAR(50),edited BOOLEAN DEFAULT FALSE,title VARCHAR(50),description VARCHAR(250),date_time VARCHAR(20),PRIMARY KEY(slug));')
+                    conn.commit()
+                    loading_txt['text'] = "Creating connection table ..."
+                except Exception as e:
+                    messagebox.showwarning("Table creation failed", "There was an while creating post table.")
+                    print(e)
+                    quit()
+            elif i == 99:
+                try:
+                    cur.execute('CREATE TABLE IF NOT EXISTS connections(username VARCHAR(50),person VARCHAR(50));')
+                    conn.commit()
+                except:
+                    messagebox.showwarning("Table creation failed", "There was an while creating connection table.")
                     quit()
 
             red = int(240 - (i * 0.91))
